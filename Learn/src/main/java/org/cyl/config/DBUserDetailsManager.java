@@ -62,23 +62,31 @@ public class DBUserDetailsManager implements UserDetailsManager, UserDetailsPass
         if (user==null){
             throw new UsernameNotFoundException(username);
         }else {
-            Collection<GrantedAuthority> authorities=new ArrayList<>();
-            authorities.add(new GrantedAuthority() {
-                @Override
-                public String getAuthority() {
-                    return "USER_LIST";
-                }
-            });
-            authorities.add(()->"USER_ADD");
-            return new org.springframework.security.core.userdetails.User(
-                    user.getUsername(),
-                    user.getPassword(),
-                    true,
-                    true,          //用户账号是否过期
-                    true,                         //用户凭证是否过期
-                    true,                         //用户是否未被锁定
-                    authorities                   //权限列表
-            );
+//            Collection<GrantedAuthority> authorities=new ArrayList<>();
+////            authorities.add(new GrantedAuthority() {
+////                @Override
+////                public String getAuthority() {
+////                    return "USER_LIST";
+////                }
+////            });
+//            authorities.add(()->"USER_ADD");
+//            return new org.springframework.security.core.userdetails.User(
+//                    user.getUsername(),
+//                    user.getPassword(),
+//                    true,
+//                    true,          //用户账号是否过期
+//                    true,                         //用户凭证是否过期
+//                    true,                         //用户是否未被锁定
+//                    authorities                   //权限列表
+//            );
+          return   org.springframework.security.core.userdetails.User
+                    .withUsername(user.getUsername()).password(user.getPassword())
+                    .disabled(false)
+                    .credentialsExpired(false)
+                    .accountLocked(false)
+                    //.roles("ADMIN")  后面的会覆盖前面的   同时 .requestMatchers("/user/**").hasRole("ADMIN")这个东西估计也要改
+                    .authorities("USER_ADD")
+                    .build();
         }
     }
 }
